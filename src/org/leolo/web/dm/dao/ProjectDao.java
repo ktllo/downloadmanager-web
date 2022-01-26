@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Vector;
 
+import org.leolo.web.dm.Constant;
 import org.leolo.web.dm.model.Project;
 import org.leolo.web.dm.model.ProjectMode;
 import org.slf4j.Logger;
@@ -71,7 +72,11 @@ public class ProjectDao extends BaseDao{
 		return null;
 	}	
 	
-	public Collection<String> getProjectPathsIgnoreCase(String path) {
+	@Deprecated
+	public Collection<String> getProjectPathsIgnoreCase(String path){
+		return getProjectPathsIgnoreCase(path, Constant.COM_DEFAULT_USER_ID);
+	}
+	public Collection<String> getProjectPathsIgnoreCase(String path, int userId) {
 		Vector<String> names = new Vector<>();
 		try(
 				Connection conn = getConnection();
@@ -113,5 +118,29 @@ public class ProjectDao extends BaseDao{
 			log.error(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	public boolean canReadProject(int projectId, int userId) {
+		try(
+				Connection conn = getConnection();
+				PreparedStatement pstmt = conn.prepareStatement("SELECT read FROM project_user WHERE project_id = ? AND user_id = ?")
+		){
+			pstmt.setInt(1, projectId);
+			pstmt.setInt(2, userId);
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					return 1 == rs.getInt(1);
+				}
+			}
+			pstmt.setInt(2, Constant.COM_DEFAULT_USER_ID);
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					return 1 == rs.getInt(1);
+				}
+			}
+		}catch(SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+		return false;//default
 	}
 }

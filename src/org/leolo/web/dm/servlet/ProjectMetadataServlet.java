@@ -38,12 +38,20 @@ public class ProjectMetadataServlet extends BaseServlet {
 		super.doGet(request, response);
 		response.setContentType("application/json");
 		log.info("URL: {}", request.getRequestURI());
-		String projectPath = request.getRequestURI().substring(request.getContextPath().length()+10);
+		log.info("User is {}", userName);
+		String projectPath = request.getRequestURI().substring(request.getContextPath().length()+10).trim();
 		log.info("Project Requested: {}", projectPath);
+		JSONObject retObj = new JSONObject();
+		if(projectPath.length()==0) {
+			//list all project
+			retObj.put("status", "success");
+			//TODO: list all project
+			retObj.write(response.getWriter());
+			return;
+		}
 		ProjectDao projDao = new ProjectDao();
 		Project proj = projDao.getProjectByPath(projectPath);
-		JSONObject retObj = new JSONObject();
-		if(proj==null) {
+		if(proj==null || projDao.canReadProject(proj.getProjectId(), userId)) {
 			retObj.put("status", "error");
 			retObj.put("message", "Specified project cannot be found");
 			retObj.put("requested", projectPath);
