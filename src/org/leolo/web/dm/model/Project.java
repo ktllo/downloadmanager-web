@@ -1,10 +1,13 @@
 package org.leolo.web.dm.model;
 
+import org.json.JSONObject;
+
 public class Project {
 	private int projectId;
 	private String projectPath;
 	private String projectName;
 	private ProjectMode mode;
+	private String description;
 	public int getProjectId() {
 		return projectId;
 	}
@@ -28,5 +31,20 @@ public class Project {
 	}
 	public void setMode(ProjectMode mode) {
 		this.mode = mode;
+	}
+	
+	public JSONObject getShortJSONObject() {
+		JSONObject obj = new JSONObject();
+		obj.put("id", projectId);
+		obj.put("name", projectName);
+		obj.put("path", projectPath);
+		obj.put("description", description);
+		return obj;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

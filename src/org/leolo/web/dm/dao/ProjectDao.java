@@ -80,12 +80,13 @@ public class ProjectDao extends BaseDao{
 		Vector<String> names = new Vector<>();
 		try(
 				Connection conn = getConnection();
-				PreparedStatement pstmt = conn.prepareStatement("SELECT project_path FROM project WHERE UPPER(project_path) = ?")
+				PreparedStatement pstmt = conn.prepareStatement("SELECT project_id, project_path FROM project WHERE UPPER(project_path) = ?")
 		){
 			 pstmt.setString(1, path.toUpperCase());
 			 try(ResultSet rs = pstmt.executeQuery()){
 				 while(rs.next()) {
-					 names.add(rs.getString(1));
+					 if(canReadProject(rs.getInt(1), userId))
+						 names.add(rs.getString(2));
 				 }
 			 }
 		}catch(SQLException e) {
@@ -97,7 +98,7 @@ public class ProjectDao extends BaseDao{
 	public Project getProjectById(int projectId) {
 		try(
 				Connection conn = getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT project_id, project_path, project_name, mode FROM project WHERE project_id = ?");
+				PreparedStatement stmt = conn.prepareStatement("SELECT project_id, project_path, project_name, mode,description FROM project WHERE project_id = ?");
 		){
 			stmt.setInt(1, projectId);
 			try(ResultSet rs = stmt.executeQuery()){
@@ -111,6 +112,7 @@ public class ProjectDao extends BaseDao{
 					}else {
 						proj.setMode(ProjectMode.SLAVE);
 					}
+					proj.setDescription(rs.getString(5));
 					return proj;
 				}
 			}
@@ -123,7 +125,7 @@ public class ProjectDao extends BaseDao{
 	public boolean canReadProject(int projectId, int userId) {
 		try(
 				Connection conn = getConnection();
-				PreparedStatement pstmt = conn.prepareStatement("SELECT read FROM project_user WHERE project_id = ? AND user_id = ?")
+				PreparedStatement pstmt = conn.prepareStatement("SELECT `read` FROM project_user WHERE project_id = ? AND user_id = ?")
 		){
 			pstmt.setInt(1, projectId);
 			pstmt.setInt(2, userId);
@@ -142,5 +144,40 @@ public class ProjectDao extends BaseDao{
 			log.error(e.getMessage(), e);
 		}
 		return false;//default
+	}
+
+	public Collection<Project> getAllProjects(int userId){
+		Vector<Project> v = new Vector<>();
+		String sql = "SELECT p.project_id, project_path, project_name, mode, description, nvl(pu.`read`,dpu.`read`) "
+				+ "FROM project p "
+				+ "JOIN project_user dpu ON p.project_id = dpu.project_id AND dpu.user_id = ? "
+				+ "LEFT OUTER JOIN project_user pu ON p.project_id = pu.project_id AND pu.user_id = ?";
+		try(
+				Connection conn = getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+		){
+			pstmt.setInt(1, Constant.COM_DEFAULT_USER_ID);
+			pstmt.setInt(2, userId);
+			try(ResultSet rs = pstmt.executeQuery()){
+				while(rs.next()) {
+					if(1==rs.getInt(6)) {
+					Project proj = new Project();
+						proj.setProjectId(rs.getInt(1));
+						proj.setProjectPath(rs.getString(2));
+						proj.setProjectName(rs.getString(3));
+						if("master".equalsIgnoreCase(rs.getString(4))) {
+							proj.setMode(ProjectMode.MASTER);
+						}else {
+							proj.setMode(ProjectMode.SLAVE);
+						}
+						proj.setDescription(rs.getString(5));
+						v.add(proj);
+					}
+				}
+			}
+		}catch(SQLException e) {
+			log.error(e.getMessage(), e);
+		}
+		return v;
 	}
 }

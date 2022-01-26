@@ -36,26 +36,38 @@ public class ProjectMetadataServlet extends BaseServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		super.doGet(request, response);
+		if(this.fatalError) {
+			return;
+		}
 		response.setContentType("application/json");
 		log.info("URL: {}", request.getRequestURI());
 		log.info("User is {}", userName);
-		String projectPath = request.getRequestURI().substring(request.getContextPath().length()+10).trim();
+		String projectPath;
+		if(request.getRequestURI().length() < request.getContextPath().length()+10) {
+			projectPath = "";
+		}else {
+			projectPath = request.getRequestURI().substring(request.getContextPath().length()+10).trim();
+		}
 		log.info("Project Requested: {}", projectPath);
+		ProjectDao projDao = new ProjectDao();
 		JSONObject retObj = new JSONObject();
 		if(projectPath.length()==0) {
 			//list all project
 			retObj.put("status", "success");
 			//TODO: list all project
+			projDao.getAllProjects(userId).forEach(proj -> {
+				retObj.append("projects", proj.getShortJSONObject());
+			});
 			retObj.write(response.getWriter());
 			return;
 		}
-		ProjectDao projDao = new ProjectDao();
 		Project proj = projDao.getProjectByPath(projectPath);
-		if(proj==null || projDao.canReadProject(proj.getProjectId(), userId)) {
+		if(proj==null || !projDao.canReadProject(proj.getProjectId(), userId)) {
+			response.setStatus(404);
 			retObj.put("status", "error");
 			retObj.put("message", "Specified project cannot be found");
 			retObj.put("requested", projectPath);
-			Collection<String> names = projDao.getProjectPathsIgnoreCase(projectPath);
+			Collection<String> names = projDao.getProjectPathsIgnoreCase(projectPath, userId);
 			for(String name:names) {
 				retObj.append("suggestedPaths", name);
 			}
