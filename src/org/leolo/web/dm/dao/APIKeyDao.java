@@ -61,9 +61,7 @@ public class APIKeyDao extends BaseDao {
 
 	public void markKeyUsed(String key) {
 		final long LAST_USE_TIME = System.currentTimeMillis();
-		dbPool.execute(new Runnable() {
-			@Override
-			public void run() {
+		dbPool.execute(() -> {
 				try(
 						Connection conn = getConnection();
 						PreparedStatement pstmt = conn.prepareStatement("UPDATE api_key SET last_key_use = ? WHERE api_key = ?");
@@ -74,7 +72,6 @@ public class APIKeyDao extends BaseDao {
 				}catch(SQLException e) {
 					log.error(e.getMessage(), e);
 				}
-			}
-		});
+			});
 	}
 }
