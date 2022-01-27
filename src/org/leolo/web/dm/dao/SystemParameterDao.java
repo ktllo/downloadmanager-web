@@ -37,8 +37,48 @@ public class SystemParameterDao extends BaseDao {
 		}
 	}
 
-	public String getParameterValue(String parameterName) {
-		return cache.get(parameterName);
+	public String getString(String parameterName) {
+		return getString(parameterName, null);
+	}
+	
+	public String getString(String paramenterName, String defaultValue) {
+		if(cache.containsKey(paramenterName)) {
+			return cache.get(paramenterName);
+		}
+		return defaultValue;
+	}
+
+	public int getInt(String parameterName) {
+		return getInt(parameterName, 0);
+	}
+	
+	public int getInt(String paramenterName, int defaultValue) {
+		if(cache.containsKey(paramenterName)) {
+			return Integer.parseInt(cache.get(paramenterName));
+		}
+		return defaultValue;
+	}
+
+	public long getLong(String parameterName) {
+		return getInt(parameterName, 0);
+	}
+	
+	public long getLong(String paramenterName, long defaultValue) {
+		if(cache.containsKey(paramenterName)) {
+			return Long.parseLong(cache.get(paramenterName));
+		}
+		return defaultValue;
+	}
+
+	public boolean getBoolean(String parameterName) {
+		return getBoolean(parameterName, false);
+	}
+	
+	public boolean getBoolean(String paramenterName, boolean defaultValue) {
+		if(cache.containsKey(paramenterName)) {
+			return Boolean.parseBoolean(cache.get(paramenterName));
+		}
+		return defaultValue;
 	}
 	
 }
