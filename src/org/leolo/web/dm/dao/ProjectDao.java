@@ -26,7 +26,7 @@ public class ProjectDao extends BaseDao{
 		try(
 				Connection conn = getConnection();
 				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT project_id, project_path, project_name, mode FROM project")
+				ResultSet rs = stmt.executeQuery("SELECT project_id, project_path, project_name, mode, description FROM project")
 		){
 			while(rs.next()) {
 				Project proj = new Project();
@@ -38,6 +38,7 @@ public class ProjectDao extends BaseDao{
 				}else {
 					proj.setMode(ProjectMode.SLAVE);
 				}
+				proj.setDescription(rs.getString(5));
 				v.add(proj);
 			}
 		}catch(SQLException e) {
