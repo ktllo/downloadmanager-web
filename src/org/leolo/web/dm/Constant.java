@@ -10,6 +10,9 @@ public class Constant {
 	public static final String BUI_KEY_USER_NAME = "uname";
 	
 	//System parameter map
+	public static final String SP_DATA_DIR = "data_dir";
+	public static final String SP_CACHE_DIR = "cache_dir";
+	public static final String SP_MAX_CACHE_SIZE = "cache_size";
 	
 	//Common value
 	public static final int COM_DEFAULT_USER_ID = 1;
