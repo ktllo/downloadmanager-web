@@ -41,7 +41,7 @@ public class UserInfoServlet extends BaseServlet {
 			obj.put("username", this.userName);
 			obj.put("method", identifiedByKey?"api-key":"session");
 		}
-		obj.put("system-name", new SystemParameterDao().getString(Constant.SP_SYSNAME));
+		obj.put("system_name", new SystemParameterDao().getString(Constant.SP_SYSNAME));
 		obj.put("api-version", Constant.SI_API_VERSION);
 		obj.write(response.getWriter());
 	}

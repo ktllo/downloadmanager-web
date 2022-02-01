@@ -2,7 +2,6 @@ package org.leolo.web.dm.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.leolo.web.dm.Constant;
 import org.leolo.web.dm.dao.SystemParameterDao;

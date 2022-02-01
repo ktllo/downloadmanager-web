@@ -1,6 +1,7 @@
 package org.leolo.web.dm.servlet;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 import org.leolo.web.dm.Constant;
 import org.leolo.web.dm.dao.SystemParameterDao;
 import org.leolo.web.dm.dao.UserDao;
+import org.leolo.web.dm.util.CommonUtil;
 import org.leolo.web.dm.util.QueuedJobs;
 import org.leolo.web.dm.util.ServletUtil;
 import org.slf4j.Logger;
@@ -53,7 +55,7 @@ public class LoginServlet extends HttpServlet {
 				log.info(mark, "User {}@{} logged in successfully!", bui.get(Constant.BUI_KEY_USER_NAME), ServletUtil.getClientIpAddr(request));
 				request.getSession().setAttribute(Constant.SESSION_USER_ID, (int)bui.get(Constant.BUI_KEY_USER_ID));
 				request.getSession().setAttribute(Constant.SESSION_USER_NAME, bui.get(Constant.BUI_KEY_USER_NAME));
-				sendSuccessResponse(response);
+				sendSuccessResponse(response, bui);
 				QueuedJobs.getInstance().queue(()->{
 					udao.updateLastLogin((int)bui.get(Constant.BUI_KEY_USER_ID));
 				});
@@ -86,9 +88,14 @@ public class LoginServlet extends HttpServlet {
 		obj.write(response.getWriter());
 	}
 	
-	private void sendSuccessResponse(HttpServletResponse response) throws IOException{
+	private void sendSuccessResponse(HttpServletResponse response, Map<String, Object> bui) throws IOException{
 		response.setContentType("application/json");
 		JSONObject obj = new JSONObject();
+		if(bui.get(Constant.BUI_KEY_LAST_LOGIN)!=null) {
+			obj.put("lastLogin", CommonUtil.formatDate((Date)bui.get(Constant.BUI_KEY_LAST_LOGIN)));
+		}else {
+			obj.put("lastLogin", (Object)null);
+		}
 		obj.put("status", "success");
 		obj.write(response.getWriter());
 	}

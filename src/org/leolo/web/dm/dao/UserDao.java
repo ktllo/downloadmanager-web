@@ -21,7 +21,7 @@ public class UserDao extends BaseDao {
 		try (Connection conn = getConnection()) {
 			// Step 1: get basic user info
 			try (PreparedStatement pstmt = conn
-					.prepareStatement("SELECT user_id, user_name, password, pwd_err_cnt FROM user WHERE user_name = ?")) {
+					.prepareStatement("SELECT user_id, user_name, password, pwd_err_cnt, last_login FROM user WHERE user_name = ?")) {
 				pstmt.setString(1, username);
 				try (ResultSet rs = pstmt.executeQuery()) {
 					if (rs.next()) {
@@ -29,6 +29,7 @@ public class UserDao extends BaseDao {
 						u.put(Constant.BUI_KEY_USER_ID, rs.getInt(1));
 						u.put(Constant.BUI_KEY_PASSWORD, rs.getString(3));
 						u.put(Constant.BUI_KEY_FAIL_CNT, rs.getInt(4));
+						u.put(Constant.BUI_KEY_LAST_LOGIN, rs.getTimestamp(5));
 					} else {
 						return null;
 					}

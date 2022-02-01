@@ -10,7 +10,7 @@
 	<script>
 	function updateUserInfo(){
 		$.get( '<%=request.getContextPath()%>/UserInfo' , function(data){
-			$('#sysname').html(data.system-name);
+			$('#sysname').text(data.system_name);
 			if(data.identified){
 				//Handle userinfo box and logout link
 				$("#hdr-action").text("Welcome back, "+data.username);
@@ -33,6 +33,7 @@
 		Download Manager - <span id="sysname"></span>
 		<span class="status" id="hdr-action">Login</span>
 		<div class="hidden hdr-info-box ui-corner-all" id="hdr-uinfo">
+			<p class="hidden" id="hdr-uinfo-pllit">Last login time : <span id="hdr-uinfo-llit"></span></p>
 			<button id="hdr-uinfo-logout">Logout</button>
 		</div>
 		<div class="hidden hdr-info-box ui-corner-all" id="hdr-login">
@@ -85,6 +86,12 @@
 						$("#hdr-login").hide();
 						$("#hdr-login-username").val("");
 						$("#hdr-login-password").val("");
+						if(data.lastLogin==null){
+							$("#hdr-uinfo-pllit").hide();
+						}else{
+							$("#hdr-uinfo-pllit").show();
+							$("#hdr-uinfo-llit").text(data.lastLogin);
+						}
 					}
 				})
 	});

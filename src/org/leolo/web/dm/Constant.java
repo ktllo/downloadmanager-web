@@ -10,6 +10,7 @@ public class Constant {
 	public static final String BUI_KEY_USER_NAME = "uname";
 	public static final String BUI_KEY_PASSWORD = "passwd";
 	public static final String BUI_KEY_FAIL_CNT = "fail_cnt";
+	public static final String BUI_KEY_LAST_LOGIN = "llit";
 	
 	//System parameter map
 	public static final String SP_DATA_DIR = "data_dir";
