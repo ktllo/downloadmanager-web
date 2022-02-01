@@ -14,13 +14,13 @@
 			if(data.identified){
 				//Handle userinfo box and logout link
 				$("#hdr-action").text("Welcome back, "+data.username);
-				$("#hdr-action").click(function(){
+				$("#hdr-action").off('click').on('click',function(){
 					$("#hdr-uinfo").toggle();
 				});
 			}else{
 				//Display login link
 				$("#hdr-action").text("Login");
-				$("#hdr-action").click(function(){
+				$("#hdr-action").off('click').on('click',function(){
 					$("#hdr-login").toggle();
 				});
 			}
@@ -66,8 +66,6 @@
 	$("#hdr-login-submit").click(function(){
 		var uname = $("#hdr-login-username").val();
 		var pass = $("#hdr-login-password").val();
-		console.log("uname="+uname);
-		console.log("paswd="+pass);
 		if(uname==null || pass==null || uname=="" ||pass==""){
 			//Display error message
 			$("#hdr-login-msg-cont").text("Username and password are required.");
@@ -80,10 +78,13 @@
 					if(data.status=="failed"){
 						$("#hdr-login-msg-cont").text(data.message);
 						$("#hdr-login-msg").show();
+						$("#hdr-login-password").val("");
 					}else{
 						updateUserInfo();
 						$("#hdr-login-msg").hide();
 						$("#hdr-login").hide();
+						$("#hdr-login-username").val("");
+						$("#hdr-login-password").val("");
 					}
 				})
 	});
