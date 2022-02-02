@@ -25,6 +25,9 @@
 				});
 			}
 		});
+		$.get('<%=request.getContextPath()%>/projects', function(data){
+			console.log("There are "+data.projects.length+" projects");
+		});
 	}
 	</script>
 </head>
