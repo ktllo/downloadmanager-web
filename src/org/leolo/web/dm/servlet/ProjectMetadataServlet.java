@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Servlet implementation class MainServlet
  */
-@WebServlet({"/metadata/*"})
+@WebServlet({"/projects/*","/metadata/*"})
 public class ProjectMetadataServlet extends BaseServlet {
 	private static Logger log = LoggerFactory.getLogger(ProjectMetadataServlet.class);
 	private static final long serialVersionUID = 1L;
