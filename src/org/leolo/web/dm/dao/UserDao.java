@@ -29,7 +29,9 @@ public class UserDao extends BaseDao {
 						u.put(Constant.BUI_KEY_USER_ID, rs.getInt(1));
 						u.put(Constant.BUI_KEY_PASSWORD, rs.getString(3));
 						u.put(Constant.BUI_KEY_FAIL_CNT, rs.getInt(4));
-						u.put(Constant.BUI_KEY_LAST_LOGIN, rs.getTimestamp(5));
+						if(rs.getTimestamp(5)!=null) {
+							u.put(Constant.BUI_KEY_LAST_LOGIN, rs.getTimestamp(5));
+						}
 					} else {
 						return null;
 					}
