@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<%@page import="org.leolo.web.dm.dao.*,org.leolo.web.dm.model.*,org.leolo.web.dm.Constant" %><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="ISO-8859-1">
@@ -7,7 +7,9 @@
 	<script src="js/jquery-ui.js"></script>
 	<link href="js/jquery-ui.css" rel="stylesheet">
 	<link href="js/main.css" rel="stylesheet">
-	<script>
+	<% 
+	SystemParameterDao spdao = new SystemParameterDao();
+	%><script>
 	function updateUserInfo(){
 		$.get( '<%=request.getContextPath()%>/UserInfo' , function(data){
 			$('#sysname').text(data.system_name);
@@ -27,13 +29,20 @@
 		});
 		$.get('<%=request.getContextPath()%>/projects', function(data){
 			console.log("There are "+data.projects.length+" projects");
+			$("#main-proj-list").clear();
+			if(data.projects.length>0){
+				$("#main-proj-list-hdr").show();
+				
+			}else{
+				$("#main-proj-list-hdr").hide();
+			}
 		});
 	}
 	</script>
 </head>
 <body>
 	<nav>
-		Download Manager - <span id="sysname"></span>
+		Download Manager - <span id="sysname"><%= spdao.getString(Constant.SP_SYSNAME) %></span>
 		<span class="status" id="hdr-action">Login</span>
 		<div class="hidden hdr-info-box ui-corner-all" id="hdr-uinfo">
 			<p class="hidden" id="hdr-uinfo-pllit">Last login time : <span id="hdr-uinfo-llit"></span></p>
@@ -60,7 +69,8 @@
 		</div>
 	</nav>
 	<main>
-		
+		<h2 id="main-proj-list-hdr">Project list</h2>
+		<div id="main-proj-list"></div>
 	</main>
 	<script>
 	//Perform post-load task
