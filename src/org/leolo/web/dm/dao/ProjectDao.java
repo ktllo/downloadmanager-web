@@ -135,6 +135,12 @@ public class ProjectDao extends BaseDao{
 					return 1 == rs.getInt(1);
 				}
 			}
+			pstmt.setInt(2, Constant.COM_ANY_USER_ID);
+			try(ResultSet rs = pstmt.executeQuery()){
+				if(rs.next()) {
+					return 1 == rs.getInt(1);
+				}
+			}
 			pstmt.setInt(2, Constant.COM_DEFAULT_USER_ID);
 			try(ResultSet rs = pstmt.executeQuery()){
 				if(rs.next()) {
@@ -149,16 +155,18 @@ public class ProjectDao extends BaseDao{
 
 	public Collection<Project> getAllProjects(int userId){
 		Vector<Project> v = new Vector<>();
-		String sql = "SELECT p.project_id, project_path, project_name, mode, description, nvl(pu.`read`,dpu.`read`) "
+		String sql = "SELECT p.project_id, project_path, project_name, mode, description, nvl(pu.`read`,nvl(apu.`read`,dpu.`read`)) "
 				+ "FROM project p "
 				+ "JOIN project_user dpu ON p.project_id = dpu.project_id AND dpu.user_id = ? "
+				+ "LEFT OUTER JOIN project_user apu ON p.project_id = apu.project_id AND apu.user_id = ? "
 				+ "LEFT OUTER JOIN project_user pu ON p.project_id = pu.project_id AND pu.user_id = ?";
 		try(
 				Connection conn = getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 		){
 			pstmt.setInt(1, Constant.COM_DEFAULT_USER_ID);
-			pstmt.setInt(2, userId);
+			pstmt.setInt(2, userId==Constant.COM_DEFAULT_USER_ID?Constant.COM_DEFAULT_USER_ID:Constant.COM_ANY_USER_ID);
+			pstmt.setInt(3, userId);
 			try(ResultSet rs = pstmt.executeQuery()){
 				while(rs.next()) {
 					if(1==rs.getInt(6)) {

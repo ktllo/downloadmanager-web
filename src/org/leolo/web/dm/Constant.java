@@ -26,4 +26,5 @@ public class Constant {
 	
 	//Common value
 	public static final int COM_DEFAULT_USER_ID = 1;
+	public static final int COM_ANY_USER_ID = 2;
 }
