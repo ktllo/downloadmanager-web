@@ -25,6 +25,7 @@ public class BaseServlet extends HttpServlet {
 	protected String userName = null;
 	protected int userId = Constant.COM_DEFAULT_USER_ID;
 	protected boolean fatalError = false;
+	protected boolean identifiedByKey = false;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -33,18 +34,22 @@ public class BaseServlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
+    private void resetParam() {
+		userName = null;
+		userId = Constant.COM_DEFAULT_USER_ID;
+		fatalError = false;
+		identifiedByKey = false;
+    }
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		log.info("Request - [GET] {}", request.getRequestURI());
-		//Reset parameters
-		userName = null;
-		userId = Constant.COM_DEFAULT_USER_ID;
-		fatalError = false;
-		
-		if(request.getAttribute(Constant.SESSION_USER_NAME)!=null) {
+//		log.info("Request - [GET] {}", request.getRequestURI());
+		resetParam();
+//		log.info("SUN : {}", request.getSession().getAttribute(Constant.SESSION_USER_NAME));
+		if(request.getSession().getAttribute(Constant.SESSION_USER_NAME)!=null) {
 			userName = request.getSession().getAttribute(Constant.SESSION_USER_NAME).toString();
 			userId = (Integer) request.getSession().getAttribute(Constant.SESSION_USER_ID);
 		}
@@ -56,6 +61,7 @@ public class BaseServlet extends HttpServlet {
 			if(buim!=null) {
 				userName = buim.get(Constant.BUI_KEY_USER_NAME).toString();
 				userId = (Integer) buim.get(Constant.BUI_KEY_USER_ID);
+				identifiedByKey = true;
 				apiDao.markKeyUsed(key);
 			}else {
 				response.setContentType("application/json");

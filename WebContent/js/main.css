@@ -1,0 +1,36 @@
+body{
+	margin: 0;
+}
+
+nav{
+	font-size: 180%;
+	background-color: blue;
+	padding: 8px;
+	position: sticky;
+	top: 0;
+}
+
+nav .name{
+	float:left;
+}
+nav .status{
+	float:right;
+}
+
+.hidden{
+	display: none;
+}
+
+main{
+	padding: 8px;
+}
+
+.hdr-info-box{
+	font-size: initial;
+	background-color: red;
+	position: fixed;
+	right: 1em;
+	padding: 1em;
+	width: 20%;
+	overflow: auto;
+}
