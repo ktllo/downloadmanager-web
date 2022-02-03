@@ -29,10 +29,15 @@
 		});
 		$.get('<%=request.getContextPath()%>/projects', function(data){
 			console.log("There are "+data.projects.length+" projects");
-			$("#main-proj-list").clear();
+			$("#main-proj-list").empty();
 			if(data.projects.length>0){
 				$("#main-proj-list-hdr").show();
-				
+				for(i=0;i<data.projects.length;i++){
+					var str = "<h3>"+data.projects[i].name+"</h3>";
+					str += "<p>"+data.projects[i].description.replace(/\n/g,"<br>")+"</p>";
+					$("#main-proj-list").append(str);
+				}
+				$("#main-proj-list").accordion("refresh");
 			}else{
 				$("#main-proj-list-hdr").hide();
 			}
@@ -44,34 +49,40 @@
 	<nav>
 		Download Manager - <span id="sysname"><%= spdao.getString(Constant.SP_SYSNAME) %></span>
 		<span class="status" id="hdr-action">Login</span>
-		<div class="hidden hdr-info-box ui-corner-all" id="hdr-uinfo">
-			<p class="hidden" id="hdr-uinfo-pllit">Last login time : <span id="hdr-uinfo-llit"></span></p>
-			<button id="hdr-uinfo-logout">Logout</button>
-		</div>
-		<div class="hidden hdr-info-box ui-corner-all" id="hdr-login">
-			<div class="hidden ui-state-error ui-corner-all" style="padding:0.3em;" id="hdr-login-msg">
-				<span class="ui-icon ui-icon-alert"></span>
-				<span id="hdr-login-msg-cont"></span>
-			</div>
-			<table>
-				<tr>
-					<th><label for="hdr-login-username" style="white-space: nowrap;">Username</label></th>
-					<td><input type="text" id="hdr-login-username"></td>
-				</tr>
-				<tr>
-					<th><label for="hdr-login-password">Password</label></th>
-					<td><input type="password" id="hdr-login-password"></td>
-				</tr>
-				<tr>
-					<td colspan="2"><button id="hdr-login-submit">Submit</button></td>
-				</tr>
-			</table>
-		</div>
 	</nav>
 	<main>
 		<h2 id="main-proj-list-hdr">Project list</h2>
 		<div id="main-proj-list"></div>
 	</main>
+	<div class="hidden hdr-info-box ui-corner-all" id="hdr-uinfo">
+		<div>
+			<span class="ui-icon ui-icon-closethick" style="float:right;" id="hdr-uinfo-close"></span>
+		</div>
+		<p class="hidden" id="hdr-uinfo-pllit">Last login time : <span id="hdr-uinfo-llit"></span></p>
+		<button id="hdr-uinfo-logout">Logout</button>
+	</div>
+	<div class="hidden hdr-info-box ui-corner-all" id="hdr-login">
+		<div>
+			<span class="ui-icon ui-icon-closethick" style="float:right;" id="hdr-login-close"></span>
+		</div>
+		<div class="hidden ui-state-error ui-corner-all" style="padding:0.3em;" id="hdr-login-msg">
+			<span class="ui-icon ui-icon-alert"></span>
+			<span id="hdr-login-msg-cont"></span>
+		</div>
+		<table>
+			<tr>
+				<th><label for="hdr-login-username" style="white-space: nowrap;">Username</label></th>
+				<td><input type="text" id="hdr-login-username"></td>
+			</tr>
+			<tr>
+				<th><label for="hdr-login-password">Password</label></th>
+				<td><input type="password" id="hdr-login-password"></td>
+			</tr>
+			<tr>
+				<td colspan="2"><button id="hdr-login-submit">Submit</button></td>
+			</tr>
+		</table>
+	</div>
 	<script>
 	//Perform post-load task
 	updateUserInfo();
@@ -115,6 +126,15 @@
 			$("#hdr-uinfo").hide();
 			
 		});
+	});
+	$("#hdr-login-close").click(function(){
+		$("#hdr-login").hide();
+	});
+	$("#hdr-uinfo-close").click(function(){
+		$("#hdr-uinfo").hide();
+	});
+	$("#main-proj-list").accordion({
+	      collapsible: true
 	});
 	</script>
 </body>
